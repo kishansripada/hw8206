@@ -85,6 +85,61 @@ def find_rest_in_building(building_num, db):
   return [entry[0] for entry in result]
 
 
+#EXTRA CREDIT
+def get_highest_rating(db):
+  connection = sqlite3.connect(db)
+  cursor = connection.cursor()
+
+  sql1 = '''
+  SELECT categories.category, ROUND(AVG(restaurants.rating), 1) as avg_rating
+  FROM restaurants
+  JOIN categories ON restaurants.category_id = categories.id
+  GROUP BY categories.category
+  ORDER BY avg_rating ASC
+  '''
+  cursor.execute(sql1)
+  result1 = cursor.fetchall()
+  top_category, top_cat_rating = result1[0]
+
+  sql2 = '''
+  SELECT buildings.building, ROUND(AVG(restaurants.rating), 1) as avg_rating
+  FROM restaurants
+  JOIN buildings ON restaurants.building_id = buildings.id
+  GROUP BY buildings.building
+  ORDER BY avg_rating ASC
+  '''
+  cursor.execute(sql2)
+  result2 = cursor.fetchall()
+  top_building, top_building_rating = result2[0]
+
+  connection.close()
+
+  cat_list = [entry[0] for entry in result1]
+  cat_ratings = [entry[1] for entry in result1]
+  building_list = [str(entry[0]) for entry in result2]
+  building_ratings = [entry[1] for entry in result2]
+
+  plt.figure(figsize=(8, 8))
+
+  plt.subplot(2, 1, 1)
+  plt.barh(cat_list, cat_ratings)
+  plt.xlabel("Ratings")
+  plt.ylabel("Categories")
+  plt.xlim(0, 5)
+  plt.title("Average Restaurant Ratings by Category")
+
+  plt.subplot(2, 1, 2)
+  plt.barh(building_list, building_ratings)
+  plt.xlabel("Ratings")
+  plt.ylabel("Buildings")
+  plt.xlim(0, 5)
+  plt.title("Average Restaurant Ratings by Building")
+
+  plt.show()
+
+  return [(top_category, top_cat_rating), (top_building, top_building_rating)]
+
+
 #Try calling your functions here
 def main():
   # rest_data = load_rest_data('South_U_Restaurants.db')
