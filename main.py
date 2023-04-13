@@ -34,6 +34,38 @@ JOIN buildings ON restaurants.building_id = buildings.id
   return rest_data
 
 
+def plot_rest_categories(db):
+  conn = sqlite3.connect(db)
+  cursor = conn.cursor()
+
+  sql = '''
+  SELECT categories.category, COUNT(restaurants.id) as count
+  FROM restaurants
+  JOIN categories ON restaurants.category_id = categories.id
+  GROUP BY categories.category
+  ORDER BY count DESC
+  '''
+  cursor.execute(sql)
+  result = cursor.fetchall()
+  cat_list = []
+  for entry in result:
+    cat_list.push(entry[0])
+  count_list = []
+  for entry in result:
+    count_list.push(entry[1])
+
+  plt.bar(cat_list, count_list)
+  plt.xticks(rotation='vertical')
+  plt.xlabel("Restaurant Categories")
+  plt.ylabel("Number of Restaurants")
+  plt.title("Types of Restaurant on South University Ave")
+  plt.show()
+
+  conn.close()
+
+  return dict(result)
+
+
 #Try calling your functions here
 def main():
   # rest_data = load_rest_data('South_U_Restaurants.db')
