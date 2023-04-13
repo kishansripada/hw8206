@@ -66,6 +66,25 @@ def plot_rest_categories(db):
   return dict(result)
 
 
+def find_rest_in_building(building_num, db):
+  conn = sqlite3.connect(db)
+  cursor = conn.cursor()
+
+  sql = '''
+  SELECT restaurants.name
+  FROM restaurants
+  JOIN buildings ON restaurants.building_id = buildings.id
+  WHERE buildings.building = ?
+  ORDER BY restaurants.rating DESC
+  '''
+  cursor.execute(sql, (building_num, ))
+  result = cursor.fetchall()
+
+  conn.close()
+
+  return [entry[0] for entry in result]
+
+
 #Try calling your functions here
 def main():
   # rest_data = load_rest_data('South_U_Restaurants.db')
