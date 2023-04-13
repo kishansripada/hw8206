@@ -13,8 +13,7 @@ def load_rest_data(db):
   conn = sqlite3.connect(db)
   cursor = conn.cursor()
 
-  query = '''
-SELECT restaurants.name, categories.category, buildings.building, restaurants.rating
+  query = '''SELECT restaurants.name, categories.category, buildings.building, restaurants.rating
 FROM restaurants
 JOIN categories ON restaurants.category_id = categories.id
 JOIN buildings ON restaurants.building_id = buildings.id
@@ -32,7 +31,6 @@ JOIN buildings ON restaurants.building_id = buildings.id
     }
 
   conn.close()
-
   return rest_data
 
 
